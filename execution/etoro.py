@@ -18,6 +18,7 @@ from typing import Optional
 from config.settings import ExecutionConfig
 from execution.base import ExecutionBase
 from strategies.base import Signal, SignalType
+from utils.secrets import get_secret
 from utils.logger import get_logger
 
 logger = get_logger("execution.etoro")
@@ -44,11 +45,16 @@ class EToroExecutor(ExecutionBase):
         self._connect()
 
     def _connect(self) -> None:
-        """Initialize eToro API connection."""
+        """Initialize eToro API connection. Loads key from Credential Manager."""
+        # Load from Windows Credential Manager (never from code/files)
+        api_key = get_secret("ETORO_API_KEY")
+        if api_key:
+            self.config.etoro_api_key = api_key
         if not self.config.etoro_api_key:
             raise ValueError(
-                "ETORO_API_KEY not set. Apply at https://api-portal.etoro.com\n"
-                "Set environment variable: export ETORO_API_KEY=your_key"
+                "ETORO_API_KEY not found.\n"
+                "Run: python setup_secrets.py → choose option 2 (eToro)\n"
+                "Or apply for key at: https://api-portal.etoro.com"
             )
         try:
             from etoro_api import ApiClient, Configuration

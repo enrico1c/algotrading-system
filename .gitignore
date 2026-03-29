@@ -17,8 +17,12 @@ env/
 
 # Secrets — NEVER commit API keys
 .env.local
-secrets.py
 etoro_config.py
+# NOTE: utils/secrets.py is the KEY MANAGER module (safe to commit — contains no keys)
+# Only exclude actual secret files:
+*_secrets.py
+*_credentials.py
+*.key
 
 # Data cache (large files, regenerated automatically)
 data/cache/

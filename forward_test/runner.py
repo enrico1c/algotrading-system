@@ -214,17 +214,45 @@ class ForwardTestRunner:
         )
 
     def _build_executor(self) -> Optional[ExecutionBase]:
+        """
+        Auto-detect which broker is configured via Credential Manager.
+        Priority: etoro (if key present) → alpaca (if key present) → signal_only
+        Mode can also be forced via settings.execution.mode.
+        """
         from execution.signal_only import SignalOnlyExecutor
+        from utils.secrets import get_secret
+
         mode = self.settings.execution.mode
-        if mode == "signal_only":
-            return SignalOnlyExecutor()
-        elif mode == "etoro":
+
+        # Auto-detect if mode not explicitly forced
+        if mode == "auto":
+            if get_secret("ETORO_API_KEY"):
+                mode = "etoro"
+            elif get_secret("ALPACA_API_KEY"):
+                mode = "alpaca"
+            else:
+                mode = "signal_only"
+            logger.info(f"Auto-detected execution mode: {mode}")
+
+        if mode == "etoro":
             try:
                 from execution.etoro import EToroExecutor
                 return EToroExecutor(self.settings.execution)
-            except ImportError:
-                logger.warning("eToro executor not available — falling back to signal_only")
+            except Exception as e:
+                logger.warning(f"eToro executor failed ({e}) — falling back to signal_only")
                 return SignalOnlyExecutor()
+
+        elif mode == "alpaca":
+            try:
+                from execution.alpaca import AlpacaExecutor
+                executor = AlpacaExecutor()
+                if not executor.is_market_open():
+                    logger.info("Market is currently closed — signals will queue for next open")
+                return executor
+            except Exception as e:
+                logger.warning(f"Alpaca executor failed ({e}) — falling back to signal_only")
+                return SignalOnlyExecutor()
+
         return SignalOnlyExecutor()
 
     def _save_signals(self, signals: List[Signal]) -> None:
