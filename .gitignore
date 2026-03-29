@@ -1,0 +1,51 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# Virtual environments
+venv/
+.venv/
+env/
+.env
+
+# Secrets — NEVER commit API keys
+.env.local
+secrets.py
+etoro_config.py
+
+# Data cache (large files, regenerated automatically)
+data/cache/
+*.parquet
+*.feather
+*.h5
+
+# Reports output (generated on run)
+reports/*.png
+reports/*.html
+reports/signals_log.json
+reports/signals_log.csv
+
+# Logs
+logs/
+*.log
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb

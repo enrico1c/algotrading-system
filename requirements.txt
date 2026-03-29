@@ -1,0 +1,24 @@
+# Core data & numerics
+yfinance>=0.2.36
+pandas>=2.0.0
+numpy>=1.26.0
+pandas-datareader>=0.10.0
+
+# Technical indicators
+ta>=0.11.0
+
+# Statistical / econometrics (VECM, cointegration)
+statsmodels>=0.14.0
+scipy>=1.11.0
+
+# Visualization & reporting
+matplotlib>=3.7.0
+seaborn>=0.13.0
+
+# eToro API (optional — only needed when developer key obtained)
+# etoro-api @ git+https://github.com/mkhaled87/etoro-api.git
+
+# Utilities
+python-dateutil>=2.8.0
+tabulate>=0.9.0
+colorama>=0.4.6
